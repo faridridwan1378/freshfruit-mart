@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Varsha Fruits & Goods - Buah Segar Bekasi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(to bottom, #f0fdf4, #d1fae5); font-family: 'Segoe UI', sans-serif; }
+    .card { transition: all 0.3s; border: none; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.2)!important; }
+    .harga { font-size: 1.8rem; color: #166534; font-weight: bold; }
+    .stok { font-size: 1rem; color: #16a34a; font-weight: 600; }
+    header { background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .btn-keranjang { position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 70px; height: 70px; border-radius: 50%; font-size: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .offcanvas-header { background: #16a34a; }
+    .form-control, .form-select { border-radius: 15px; }
+    .btn-success { border-radius: 50px; }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      header .container { flex-direction: column; text-align: center; }
+      header img { width: 150px; height: 150px; margin-bottom: 10px; }
+      header h1 { font-size: 2.5rem !important; }
+      .card img { height: 180px !important; }
+      .harga { font-size: 1.4rem !important; }
+      .stok { font-size: 0.9rem !important; }
+      .btn-keranjang { width: 60px; height: 60px; font-size: 1.5rem; }
+      .offcanvas-body { padding: 1rem; }
+      .form-control, .form-select { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="text-white py-4">
+  <div class="container d-flex align-items-center">
+    <img src="./logo.png" alt="Logo" class="me-3 rounded shadow" style="width:300px; height:300px;">
+    <div>
+     <h1 class="display-1 fw-bold mb-2 text-shadow" style="font-size: 5.5rem; letter-spacing: 2px;">
+      Varsha Fruits & Goods
+    </h1>
+      <small>Fresh & Updated Everyday</small>
+    </div>
+ 
+</header>
+
+<div class="container my-5">
+  <div class="row g-4" id="daftarBuah"></div>
+</div>
+
+<!-- Tombol Keranjang Mengambang -->
+<button class="btn btn-success btn-lg btn-keranjang shadow-lg" onclick="bukaKeranjang()">
+  🛒
+  <span id="jmlKeranjang" class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">0</span>
+</button>
+
+<!-- Keranjang + Checkout -->
+<div class="offcanvas offcanvas-end" id="keranjang">
+  <div class="offcanvas-header text-white">
+    <h5 class="m-0 fw-bold">Keranjang Belanja</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body pt-4">
+    <div id="isiKeranjang" class="mb-4"></div>
+
+    <div class="bg-white rounded-4 shadow p-4 mb-4 border border-success">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold fs-4">Total Belanja</span>
+        <span class="text-success fw-bold fs-3">Rp <span id="totalHarga">0</span></span>
+      </div>
+    </div>
+
+    <h5 class="text-center text-success fw-bold mb-4">Informasi Pengiriman</h5>
+    <form id="formCheckout">
+      <div class="mb-3">
+        <input type="text" id="nama" class="form-control form-control-lg rounded-pill shadow-sm" placeholder="Nama Lengkap" required>
+      </div>
+      <div class="mb-3">
+        <input type="tel" id="wa" class="form-control form-control-lg rounded-3 shadow-sm" placeholder="No. WhatsApp (081...)" required>
+      </div>
+      <div class="mb-3">
+        <textarea id="alamat" class="form-control rounded-3 shadow-sm" rows="3" placeholder="Alamat Lengkap (Jalan, RT/RW, Kelurahan)" required></textarea>
+      </div>
+      <div class="mb-3">
+        <select id="kota" class="form-select form-select-lg rounded-pill shadow-sm" required>
+  <option value="">Pilih Kecamatan / Kota</option>
+
+  <!-- DEPOK -->
+  <optgroup label="KOTA DEPOK">
+    <option>Beji (Depok)</option>
+    <option>Cinere (Depok)</option>
+    <option>Sawangan (Depok)</option>
+    <option>Pancoran Mas (Depok)</option>
+    <option>Limo (Depok)</option>
+    <option>Sukmajaya (Depok)</option>
+    <option>Cimanggis (Depok)</option>
+    <option>Tapos (Depok)</option>
+    <option>Bojongsari (Depok)</option>
+    <option>Cilodong (Depok)</option>
+    <option>Cipayung (Depok)</option>
+  </optgroup>
+
+  <!-- BEKASI KOTA -->
+  <optgroup label="KOTA BEKASI">
+    <option>Bekasi Barat (Kota)</option>
+    <option>Bekasi Timur (Kota)</option>
+    <option>Bekasi Utara (Kota)</option>
+    <option>Bekasi Selatan (Kota)</option>
+    <option>Bekasi Timur (Kota)</option>
+    <option>Jatiasih (Kota Bekasi)</option>
+    <option>Jatisampurna (Kota Bekasi)</option>
+    <option>Bekasi Barat (Kota)</option>
+    <option>Medan Satria (Kota Bekasi)</option>
+    <option>Pondokgede (Kota Bekasi)</option>
+    <option>Pondok Melati (Kota Bekasi)</option>
+    <option>Rawalumbu (Kota Bekasi)</option>
+    <option>Mustikajaya (Kota Bekasi)</option>
+    <option>Bantar Gebang (Kota Bekasi)</option>
+  </optgroup>
+        <!-- BEKASI KABUPATEN -->
+  <optgroup label="KABUPATEN BEKASI">
+    <option>Cikarang Barat (Kabupaten Bekasi)</option>
+    <option>Cikarang Timur (Kabupaten Bekasi)</option>
+    <option>Cikarang Utara (Kabupaten Bekasi)</option>
+    <option>Cikarang Selatan (Kabupaten Bekasi)</option>
+    <option>Cikarang Pusat (Kabupaten Bekasi)</option>
+    <option>Tambun Selatan (Kabupaten Bekasi)</option>
+    <option>Tambun Utara (Kabupaten Bekasi)</option>
+    <option>Tarumajaya (Kabupaten Bekasi)</option>
+    <option>Babelan (Kabupaten Bekasi)</option>
+    <option>Setu (Kabupaten Bekasi)</option>
+    <option>Cibitung (Kabupaten Bekasi)</option>
+    <option>Kedung Waringin (Kabupaten Bekasi)</option>
+    <option>Sukatani (Kabupaten Bekasi)</option>
+    <option>Sukakarya (Kabupaten Bekasi)</option>
+    <option>Serang Baru (Kabupaten Bekasi)</option>
+    <option>Cibarusah (Kabupaten Bekasi)</option>
+    <option>Bojongmangu (Kabupaten Bekasi)</option>
+    <option>Karangbahagia (Kabupaten Bekasi)</option>
+    <option>Cabangbungin (Kabupaten Bekasi)</option>
+    <option>Muara Gembong (Kabupaten Bekasi)</option>
+    <option>Pebayuran (Kabupaten Bekasi)</option>
+  </optgroup>
+
+  <!-- WILAYAH LAIN (CONTOH) -->
+  <optgroup label="JAKARTA & SEKITARNYA">
+    <option>Jakarta Selatan</option>
+    <option>Jakarta Timur</option>
+    <option>Jakarta Barat</option>
+    <option>Jakarta Pusat</option>
+    <option>Jakarta Utara</option>
+    <option>Tangerang Selatan</option>
+    <option>Tangerang KOTA</option>
+    <option>Bogor</option>
+  </optgroup>
+
+  <option>Lainnya</option>
+</select>
+      </div>
+      <div class="mb-4">
+        <textarea id="catatan" class="form-control rounded-3 shadow-sm" rows="2" placeholder="Catatan (opsional): Taruh di pos, kirim jam 10 pagi, dll"></textarea>
+      </div>
+      <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-lg py-3 fs-5">
+        KIRIM PESANAN VIA WHATSAPP
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal untuk View Image Full -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body text-center p-0">
+        <img id="fullImage" src="" class="img-fluid" style="max-height: 80vh;">
+      </div>
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const NOMOR_ADMIN = "6285161063781"; // NOMOR WA KAMU
+
+  let keranjang = JSON.parse(localStorage.getItem('keranjang') || '[]');
+
+  function waktuSekarang() {
+    const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    const d = new Date();
+    const jam = d.getHours().toString().padStart(2,'0');
+    const menit = d.getMinutes().toString().padStart(2,'0');
+    return `${hari[d.getDay()]}, ${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()} - ${jam}:${menit} WIB`;
+  }
+
+  function renderProduk() {
+    const container = document.getElementById('daftarBuah');
+    container.innerHTML = '';
+    produk.filter(p => p.stok > 0).forEach(p => {
+      const col = document.createElement('div');
+      col.className = 'col-md-6 col-lg-4 col-xl-3';
+      col.innerHTML = `
+        <div class="card h-100">
+          <img src="${p.foto}" class="card-img-top" style="height:240px; object-fit:cover; cursor:pointer;" onclick="viewFullImage('${p.foto}')">
+          <div class="card-body d-flex flex-column p-4">
+            <h5 class="card-title fw-bold">${p.nama}</h5>
+            <p class="harga mb-1">Rp ${p.harga.toLocaleString()} <small class="text-muted fw-normal">/ ${p.satuan}</small></p>
+            <p class="stok mb-3">Stok tersedia: ${p.stok} ${p.satuan}</p>
+            <button class="btn btn-success mt-auto fw-bold rounded-pill py-3" onclick="tambahKeKeranjang(${p.id})">
+              + Keranjang
+            </button>
+          </div>
+        </div>`;
+      container.appendChild(col);
+    });
+  }
+
+  function viewFullImage(src) {
+    document.getElementById('fullImage').src = src;
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
+  }
+
+  function tambahKeKeranjang(id) {
+    const item = produk.find(p => p.id === id);
+    const ada = keranjang.find(k => k.id === id);
+    if (ada) {
+      if (ada.jumlah < item.stok) ada.jumlah++;
+      else { alert('Maaf, stok tidak cukup!'); return; }
+    } else {
+      keranjang.push({id, nama: item.nama, harga: item.harga, satuan: item.satuan, jumlah: 1});
+    }
+    localStorage.setItem('keranjang', JSON.stringify(keranjang));
+    updateJumlah();
+  }
+
+  function updateJumlah() {
+    const total = keranjang.reduce((sum, k) => sum + k.jumlah, 0);
+    document.getElementById('jmlKeranjang').textContent = total;
+  }
+
+  function bukaKeranjang() {
+    renderKeranjang();
+    new bootstrap.Offcanvas(document.getElementById('keranjang')).show();
+  }
+
+  function renderKeranjang() {
+    const el = document.getElementById('isiKeranjang');
+    if (keranjang.length === 0) {
+      el.innerHTML = '<div class="text-center py-5"><p class="text-muted fs-3">Keranjang kosong</p></div>';
+      document.getElementById('totalHarga').textContent = '0';
+      return;
+    }
+
+    let html = '';
+    let totalHarga = 0;
+    keranjang.forEach((k, i) => {
+      const subtotal = k.harga * k.jumlah;
+      totalHarga += subtotal;
+      html += `
+        <div class="bg-white rounded-3 shadow-sm p-3 mb-3 border">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong class="text-success">${k.nama}</strong><br>
+              <small class="text-muted">${k.jumlah} ${k.satuan} × Rp ${k.harga.toLocaleString()}</small>
+            </div>
+            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="hapusItem(${i})">Hapus</button>
+          </div>
+          <div class="text-end mt-2 text-success fw-bold">Rp ${subtotal.toLocaleString()}</div>
+        </div>`;
+    });
+    el.innerHTML = html;
+    document.getElementById('totalHarga').textContent = totalHarga.toLocaleString();
+  }
+
+  window.hapusItem = function(index) {
+    keranjang.splice(index, 1);
+    localStorage.setItem('keranjang', JSON.stringify(keranjang));
+    renderKeranjang();
+    updateJumlah();
+  }
+
+  // CHECKOUT FINAL — PESAN WA 100% RAPI & CANTIK
+  document.getElementById('formCheckout').onsubmit = function(e) {
+    e.preventDefault();
+    if (keranjang.length === 0) return alert("Keranjang kosong!");
+
+    const nama = document.getElementById('nama').value.trim();
+    const wa = document.getElementById('wa').value.trim();
+    const alamat = document.getElementById('alamat').value.trim();
+    const kota = document.getElementById('kota').value;
+    const catatan = document.getElementById('catatan').value.trim();
+
+    if (!nama || !wa || !alamat || !kota) {
+      alert("Mohon lengkapi semua data pengiriman!");
+      return;
+    }
+
+    const waktu = waktuSekarang();
+
+    let pesan = "━━━━━━━━━━━━━━━━━━━━━━\n";
+    pesan += "      PESANAN BARU      \n";
+    pesan += "   Varsha Fruits & Goods   \n";
+    pesan += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+    pesan += "Tanggal & Jam Order\n";
+    pesan += waktu + "\n\n";
+    pesan += "Data Pelanggan\n";
+    pesan += "Nama     : " + nama + "\n";
+    pesan += "WA       : " + wa + "\n";
+    pesan += "Alamat   : " + alamat + "\n";
+    pesan += "Kota/Kec : " + kota + "\n";
+    if (catatan) pesan += "Catatan  : " + catatan + "\n";
+    pesan += "\n";
+    pesan += "Rincian Pesanan\n";
+    pesan += "━━━━━━━━━━━━━━━━━━━━━━\n";
+
+    let total = 0;
+    keranjang.forEach(k => {
+      const sub = k.harga * k.jumlah;
+      total += sub;
+      pesan += k.nama + "\n";
+      pesan += k.jumlah + " " + k.satuan + " x Rp " + k.harga.toLocaleString() + " = Rp " + sub.toLocaleString() + "\n\n";
+    });
+
+    pesan += "━━━━━━━━━━━━━━━━━━━━━━\n";
+    pesan += "TOTAL BELANJA\n";
+    pesan += "Rp " + total.toLocaleString() + "\n";
+    pesan += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+    pesan += "Terima kasih sudah order!\n";
+    pesan += "Kami akan segera hubungi ya";
+
+    window.open("https://wa.me/" + NOMOR_ADMIN + "?text=" + encodeURIComponent(pesan), "_blank");
+
+    // Simpan riwayat
+    const riwayat = JSON.parse(localStorage.getItem('riwayat_pesanan') || '[]');
+    riwayat.push({ waktu, nama, wa, alamat, kota, catatan, total, items: keranjang });
+    localStorage.setItem('riwayat_pesanan', JSON.stringify(riwayat));
+
+    // Reset
+    keranjang = [];
+    localStorage.setItem('keranjang', '[]');
+    updateJumlah();
+    bootstrap.Offcanvas.getInstance(document.getElementById('keranjang')).hide();
+    alert("Pesanan berhasil dikirim ke WhatsApp!\nTerima kasih sudah order");
+  };
+
+  renderProduk();
+  updateJumlah();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
